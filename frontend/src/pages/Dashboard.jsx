@@ -20,6 +20,9 @@ import LottieAnimation from "../components/LottieAnimation";
 import socket from "../socket";
 import { FaChessKing } from "react-icons/fa";
 import VotingLiveModal from '../components/VotingLiveModal';
+import { axiosInstance } from "../store/index";
+
+
 const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
 const token = localStorage.getItem("token");
 
@@ -61,13 +64,9 @@ const Dashboard = () => {
     };
 
     try {
-      const res = await axios.post(
+      const res = await axiosInstance.post(
         `${API_BASE_URL}/votes/vote`,
-        payload, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        payload
       );
       setOpen(false);
       setVoteSuccess(true);
