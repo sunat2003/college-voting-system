@@ -60,7 +60,7 @@ const AdminNavbar = () => {
   const hideWinner = async () => {
     try {
       await axiosInstance.post(`${API_BASE_URL}/election/toggle-winners`, {
-        show: true,
+        show: false,
       }, {
         isAdmin: true,
       });

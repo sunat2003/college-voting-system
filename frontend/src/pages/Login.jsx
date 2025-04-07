@@ -66,7 +66,7 @@ const Login = () => {
   };
 
   return (
-    <div className="w-screen flex md:flex-row flex-col md:h-screen h-auto">
+    <div className="w-screen flex md:flex-row flex-col md:h-screen h-auto gap-y-10 pt-10">
       <div className="md:w-1/2 w-full h-full flex justify-center items-center">
         {/* <img
           src={loginImage}
@@ -79,7 +79,7 @@ const Login = () => {
       <div className="md:w-1/2 w-full h-full flex flex-col justify-center items-center pb-10">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-3/4 md:p-10 p-10 rounded-[5px] shadow-2xl"
+          className="sm:w-3/4 w-[90%] md:p-10 p-10 rounded-[5px] shadow-2xl"
           style={{ outline: "1px solid #41122e" }}
         >
           <Typography
