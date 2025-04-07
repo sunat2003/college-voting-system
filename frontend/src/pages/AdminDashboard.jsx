@@ -6,15 +6,11 @@ import AddCandidateModal from "../components/AddCandidateModal";
 import socket from "../socket";
 import axios from "axios";
 import { GiChessKing } from "react-icons/gi";
-import { FaRegChessQueen } from "react-icons/fa6";
+import { FaRegChessQueen, FaChessBishop, FaChessKnight } from "react-icons/fa6";
 import { SiChessdotcom } from "react-icons/si";
-import { FaChessBishop } from "react-icons/fa6";
-import { FaChessKnight } from "react-icons/fa6";
 import CandidateCard from "../components/CandidateCard";
 import UpdateCandidateModal from "../components/UpdateCandidateModal";
-const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
-
-
+const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 
 const AdminDashboard = () => {
   const {
@@ -31,33 +27,26 @@ const AdminDashboard = () => {
     deleteCandidates,
   } = useStore();
   const [open, setOpen] = useState(false);
-
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [votingActive, setVotingActive] = useState(true);
 
   const handleDeleteCandidate = async (id) => {
     try {
       await deleteCandidates(id);
-      fetchCandidatesByPresident();
-      fetchCandidatesByVicePresident();
-      fetchCandidatesByGeneralSecretary();
-      fetchCandidatesByJointSecretary();
-      fetchCandidatesByTreasurer();
+      fetchAllCandidates();
     } catch (error) {
       console.error(error);
     }
   };
-
-  const [message, setMessage] = useState("");
-  const [votingActive, setVotingActive] = useState(true);
 
   const startVoting = async () => {
     try {
       await axios.post(`${API_BASE_URL}/voting-status`, {
         isActive: true,
       });
-
-      socket.emit("startVoting"); // real-time trigger
+      socket.emit("startVoting");
       setMessage("🟢 Voting started");
     } catch (err) {
       console.error("Error starting voting", err);
@@ -69,15 +58,21 @@ const AdminDashboard = () => {
       await axios.post(`${API_BASE_URL}/voting-status`, {
         isActive: false,
       });
-
-      socket.emit("stopVoting"); // real-time trigger
+      socket.emit("stopVoting");
       setMessage("🔴 Voting ended");
     } catch (err) {
       console.error("Error stopping voting", err);
     }
   };
 
-  // Fetch voting status from DB on mount
+  const fetchAllCandidates = () => {
+    fetchCandidatesByPresident();
+    fetchCandidatesByVicePresident();
+    fetchCandidatesByGeneralSecretary();
+    fetchCandidatesByJointSecretary();
+    fetchCandidatesByTreasurer();
+  };
+
   useEffect(() => {
     axios.get(`${API_BASE_URL}/voting-status`).then((res) => {
       setMessage(
@@ -88,7 +83,7 @@ const AdminDashboard = () => {
       setVotingActive(!res.data.isActive);
     });
   }, []);
-  // Listen to socket events
+
   useEffect(() => {
     socket.on("votingStarted", () => {
       setMessage("🟢 Voting has started!");
@@ -107,26 +102,52 @@ const AdminDashboard = () => {
   }, []);
 
   useEffect(() => {
-    fetchCandidatesByPresident();
-    fetchCandidatesByVicePresident();
-    fetchCandidatesByGeneralSecretary();
-    fetchCandidatesByJointSecretary();
-    fetchCandidatesByTreasurer();
+    fetchAllCandidates();
   }, []);
+
+  const renderCandidateSection = (title, Icon, candidates) => (
+    <div className="w-full sm:p-10 p-3 bg-[#fff] rounded-[5px] flex flex-col gap-y-5">
+      <h1 className="flex gap-x-2 py-1 items-center text-lg font-semibold">
+        <Icon className="text-[#41122e]" />
+        {title}
+      </h1>
+
+      {candidates.length > 0 ? (
+        <div className="flex flex-wrap justify-between gap-y-5">
+          {candidates.map((candidate) => (
+            <CandidateCard
+              key={candidate._id}
+              candidate={candidate}
+              onDelete={() => handleDeleteCandidate(candidate._id)}
+              onUpdate={() => {
+                setSelectedCandidate(candidate);
+                setIsUpdateModalOpen(true);
+              }}
+              votingActive={!votingActive}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center text-gray-500">
+          No {title.toLowerCase()} available.
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="w-screen h-auto bg-[#eee]">
       <AdminNavbar />
       <section className="w-full h-[85%] p-5 flex flex-col gap-y-2">
-        <div className="w-full p-2  flex justify-between">
+        <div className="w-full p-2 flex justify-between">
           <div className="flex gap-x-5 items-center">
             <Button
               variant="contained"
               sx={{
                 background: "gray",
-                fontSize: { xs: "10px", sm: "12px"}, // small on xs/sm, default on md+
-                px: { xs: 1, sm: 2, md: 4 }, // optional: responsive padding
-                py: { xs: 0.5, sm: 1, md: 1.5 }, // optional
+                fontSize: { xs: "10px", sm: "12px" },
+                px: { xs: 1, sm: 2, md: 4 },
+                py: { xs: 0.5, sm: 1, md: 1.5 },
               }}
               onClick={startVoting}
             >
@@ -137,9 +158,9 @@ const AdminDashboard = () => {
               onClick={stopVoting}
               sx={{
                 background: "#41122e",
-                fontSize: { xs: "10px", sm: "12px"}, // small on xs/sm, default on md+
+                fontSize: { xs: "10px", sm: "12px" },
                 px: { xs: 1, sm: 2, md: 4 },
-                py: { xs: 0.5, sm: 1, md: 1.5 }, // optional
+                py: { xs: 0.5, sm: 1, md: 1.5 },
               }}
             >
               Stop Voting
@@ -151,141 +172,35 @@ const AdminDashboard = () => {
             disabled={!votingActive}
             sx={{
               background: "#41122e",
-              fontSize: { xs: "10px", sm: "12px"}, // small on xs/sm, default on md+
+              fontSize: { xs: "10px", sm: "12px" },
               px: { xs: 1, sm: 2, md: 4 },
-              py: { xs: 0.5, sm: 1, md: 1.5 }, // optional
+              py: { xs: 0.5, sm: 1, md: 1.5 },
             }}
           >
             Add Candidates
           </Button>
         </div>
+
         {message && (
           <div className="mb-4 p-5 bg-white shadow-md rounded">{message}</div>
         )}
 
-        <div className="w-full sm:p-10 p-3 bg-[#fff] rounded-[#5px] flex flex-col gap-y-5">
-          <h1 className="flex gap-x-2 py-1 items-center">
-            <GiChessKing className="text-[#41122e]" /> President Candidates
-          </h1>
-
-          <div className="flex flex-wrap justify-between gap-y-5">
-            {president.map((candidate) => (
-              <CandidateCard
-                key={candidate._id}
-                candidate={candidate}
-                onDelete={() => handleDeleteCandidate(candidate._id)}
-                onUpdate={() => {
-                  setSelectedCandidate(candidate);
-                  setIsUpdateModalOpen(true);
-                }}
-                votingActive={!votingActive}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="w-full sm:p-10 p-3 bg-[#fff] rounded-[#5px] flex flex-col gap-y-5">
-          <h1 className="flex gap-x-2 py-1 items-center">
-            <FaRegChessQueen className="text-[#41122e]" />
-            Vice President Candidates
-          </h1>
-
-          <div className="flex flex-wrap justify-between gap-y-5">
-            {vicePresident.map((candidate) => (
-              <CandidateCard
-                key={candidate._id}
-                candidate={candidate}
-                onDelete={() => handleDeleteCandidate(candidate._id)}
-                onUpdate={() => {
-                  setSelectedCandidate(candidate);
-                  setIsUpdateModalOpen(true);
-                }}
-                votingActive={!votingActive}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="w-full sm:p-10 p-3 bg-[#fff] rounded-[#5px] flex flex-col gap-y-5">
-          <h1 className="flex gap-x-2 py-1 items-center">
-            <FaChessBishop className="text-[#41122e]" />
-            General Secretary Candidates
-          </h1>
-
-          <div className="flex flex-wrap justify-between gap-y-5">
-            {generalSecretary.map((candidate) => (
-              <CandidateCard
-                key={candidate._id}
-                candidate={candidate}
-                onDelete={() => handleDeleteCandidate(candidate._id)}
-                onUpdate={() => {
-                  setSelectedCandidate(candidate);
-                  setIsUpdateModalOpen(true);
-                }}
-                votingActive={!votingActive}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="w-full sm:p-10 p-3 bg-[#fff] rounded-[#5px] flex flex-col gap-y-5">
-          <h1 className="flex gap-x-2 py-1 items-center">
-            <FaChessKnight className="text-[#41122e]" />
-            Joint Secretary Candidates
-          </h1>
-
-          <div className="flex flex-wrap justify-between gap-y-5">
-            {jointSecretary.map((candidate) => (
-              <CandidateCard
-                key={candidate._id}
-                candidate={candidate}
-                onDelete={() => handleDeleteCandidate(candidate._id)}
-                onUpdate={() => {
-                  setSelectedCandidate(candidate);
-                  setIsUpdateModalOpen(true);
-                }}
-                votingActive={!votingActive}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="w-full sm:p-10 p-3 bg-[#fff] rounded-[#5px] flex flex-col gap-y-5">
-          <h1 className="flex gap-x-2 py-1 items-center">
-            <SiChessdotcom className="text-[#41122e]" />
-            Treasurer Candidates
-          </h1>
-
-          <div className="flex flex-wrap justify-between gap-y-5">
-            {treasurer.map((candidate) => (
-              <CandidateCard
-                key={candidate._id}
-                candidate={candidate}
-                onDelete={() => handleDeleteCandidate(candidate._id)}
-                onUpdate={() => {
-                  setSelectedCandidate(candidate);
-                  setIsUpdateModalOpen(true);
-                }}
-                votingActive={!votingActive}
-              />
-            ))}
-          </div>
-        </div>
+        {/* Candidate Sections */}
+        {renderCandidateSection("President Candidates", GiChessKing, president)}
+        {renderCandidateSection("Vice President Candidates", FaRegChessQueen, vicePresident)}
+        {renderCandidateSection("General Secretary Candidates", FaChessBishop, generalSecretary)}
+        {renderCandidateSection("Joint Secretary Candidates", FaChessKnight, jointSecretary)}
+        {renderCandidateSection("Treasurer Candidates", SiChessdotcom, treasurer)}
       </section>
 
-      {/* Add Candidate Modal */}
-      <AddCandidateModal
-        open={open}
-        handleClose={() => setOpen(false)}
-        // onCandidateAdded={fetchCandidates}
-      />
+      <AddCandidateModal open={open} handleClose={() => setOpen(false)} />
 
       <UpdateCandidateModal
         open={isUpdateModalOpen}
         handleClose={() => setIsUpdateModalOpen(false)}
         candidateData={selectedCandidate}
         onUpdated={() => {
-          fetchCandidatesByPresident();
-          fetchCandidatesByVicePresident();
-          fetchCandidatesByGeneralSecretary();
-          fetchCandidatesByJointSecretary();
-          fetchCandidatesByTreasurer();
+          fetchAllCandidates();
           setIsUpdateModalOpen(false);
         }}
       />

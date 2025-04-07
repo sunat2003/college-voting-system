@@ -18,11 +18,13 @@ import axios from "axios";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { FaRegCircle } from "react-icons/fa";
 import { axiosInstance } from "../store/index";
+import AddDepartmentModal from "./AddDeparartment";
+import AddBranchModal from "./AddBranchModal";
+import DepartmentListModal from '../components/DepartmentListModal';
+import BranchListModal from '../components/BranchListModal';
 
-const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
+const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 const adminToken = localStorage.getItem("adminToken");
-
-
 
 const AdminNavbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -34,6 +36,15 @@ const AdminNavbar = () => {
   const { fetchCandidates } = useStore();
   const [candiateModalOpen, setcandiateModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDepartmentDropdownOpen, setIsDepartmentDropdownOpen] =
+    useState(false);
+  const [isBranchDropdownOpen, setIsBranchDropdownOpen] = useState(false);
+  const [isAddDepartmentModalOpen, setIsAddDepartmentModalOpen] =
+    useState(false);
+  const [isAddBranchModalOpen, setIsAddBranchModalOpen] = useState(false);
+  const [openListDept, setOpenListDept] = useState(false);
+  const [openListBranch, setOpenListBranch] = useState(false);
+
 
   useEffect(() => {
     fetchCandidates();
@@ -46,11 +57,15 @@ const AdminNavbar = () => {
 
   const showWinner = async () => {
     try {
-      await axiosInstance.post(`${API_BASE_URL}/election/toggle-winners`, {
-        show: true,
-      }, {
-        isAdmin: true,
-      });
+      await axiosInstance.post(
+        `${API_BASE_URL}/election/toggle-winners`,
+        {
+          show: true,
+        },
+        {
+          isAdmin: true,
+        }
+      );
       toast.success("Winner Published Successfully");
     } catch (error) {
       console.error(error);
@@ -59,11 +74,15 @@ const AdminNavbar = () => {
 
   const hideWinner = async () => {
     try {
-      await axiosInstance.post(`${API_BASE_URL}/election/toggle-winners`, {
-        show: false,
-      }, {
-        isAdmin: true,
-      });
+      await axiosInstance.post(
+        `${API_BASE_URL}/election/toggle-winners`,
+        {
+          show: false,
+        },
+        {
+          isAdmin: true,
+        }
+      );
       toast.success("Winner Hide Successfully");
     } catch (error) {
       console.error(error);
@@ -187,13 +206,96 @@ const AdminNavbar = () => {
             )}
           </li>
 
-          <li className="cursor-pointer text-[#41122e] hover:text-[#6d3b59] flex items-center gap-x-2">
-            <SiGoogleclassroom />
-            Add Departments
+          {/* Departments Dropdown */}
+          <li className="text-[#41122e] hover:text-[#6d3b59]">
+            <div
+              className="cursor-pointer flex items-center justify-between pr-2"
+              onClick={() =>
+                setIsDepartmentDropdownOpen(!isDepartmentDropdownOpen)
+              }
+            >
+              <div className="flex items-center gap-x-2">
+                <SiGoogleclassroom />
+                Departments
+              </div>
+              <div>
+                {isDepartmentDropdownOpen ? (
+                  <FaChevronUp className="text-sm" />
+                ) : (
+                  <FaChevronDown className="text-sm" />
+                )}
+              </div>
+            </div>
+
+            {isDepartmentDropdownOpen && (
+              <ul className="ml-6 mt-2 space-y-1 text-sm text-[#41122e]">
+                <li
+                  className="cursor-pointer hover:text-[gray] text-[15px] py-1 flex items-center gap-x-2"
+                  onClick={() => {
+                    setIsAddDepartmentModalOpen(true);
+                    setIsSidebarOpen(false);
+                  }}
+                >
+                  <FaRegCircle />
+                  Add Department
+                </li>
+                <Divider />
+                <li
+                  className="cursor-pointer hover:text-[gray] text-[15px] py-1 flex items-center gap-x-2"
+                  onClick={() => {
+                    setIsSidebarOpen(false);
+                    setOpenListDept(true)                  }}
+                >
+                  <FaRegCircle />
+                  Department List
+                </li>
+              </ul>
+            )}
           </li>
-          <li className="cursor-pointer text-[#41122e] hover:text-[#6d3b59] flex items-center gap-x-2">
-            <BsFillDoorOpenFill />
-            Add Branches
+
+          {/* Branches Dropdown */}
+          <li className="text-[#41122e] hover:text-[#6d3b59]">
+            <div
+              className="cursor-pointer flex items-center justify-between pr-2"
+              onClick={() => setIsBranchDropdownOpen(!isBranchDropdownOpen)}
+            >
+              <div className="flex items-center gap-x-2">
+                <BsFillDoorOpenFill />
+                Branches
+              </div>
+              <div>
+                {isBranchDropdownOpen ? (
+                  <FaChevronUp className="text-sm" />
+                ) : (
+                  <FaChevronDown className="text-sm" />
+                )}
+              </div>
+            </div>
+
+            {isBranchDropdownOpen && (
+              <ul className="ml-6 mt-2 space-y-1 text-sm text-[#41122e]">
+                <li
+                  className="cursor-pointer hover:text-[gray] text-[15px] py-1 flex items-center gap-x-2"
+                  onClick={() => {
+                    setIsAddBranchModalOpen(true);
+                    setIsSidebarOpen(false);
+                  }}
+                >
+                  <FaRegCircle />
+                  Add Branch
+                </li>
+                <Divider />
+                <li
+                  className="cursor-pointer hover:text-[gray] text-[15px] py-1 flex items-center gap-x-2"
+                  onClick={() => {
+                    setIsSidebarOpen(false);
+                    setOpenListBranch(true);                  }}
+                >
+                  <FaRegCircle />
+                  Branch List
+                </li>
+              </ul>
+            )}
           </li>
         </ul>
         <div className="w-full px-5">
@@ -252,6 +354,20 @@ const AdminNavbar = () => {
         handleClose={() => setcandiateModalOpen(false)}
         onCandidateAdded={fetchCandidates}
       />
+
+      <AddDepartmentModal
+      open={isAddDepartmentModalOpen}
+      onClose={()=>{setIsAddDepartmentModalOpen(false)}}/>
+
+
+      <AddBranchModal
+       open={isAddBranchModalOpen}
+       onClose={()=>{setIsAddBranchModalOpen(false)}}
+      />
+
+<DepartmentListModal open={openListDept} onClose={() => setOpenListDept(false)} />
+      <BranchListModal open={openListBranch} onClose={() => setOpenListBranch(false)} />
+
     </>
   );
 };
