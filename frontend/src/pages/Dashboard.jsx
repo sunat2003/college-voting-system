@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import LottieAnimation from "../components/LottieAnimation";
 import socket from "../socket";
 import { FaChessKing } from "react-icons/fa";
+import VotingLiveModal from '../components/VotingLiveModal';
 const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
 const token = localStorage.getItem("token");
 
@@ -305,6 +306,8 @@ const Dashboard = () => {
             </div>
           </Box>
         </Modal>
+
+        <VotingLiveModal open={votingActive} />
       </section>
     </div>
   );
