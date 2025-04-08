@@ -148,7 +148,7 @@ const Dashboard = () => {
             >
               <div className="w-[50%] flex items-center h-[100%]">
                 <img
-                  src={`${import.meta.env.VITE_APP_BASE_URL}${candidate?.image}`}
+                  src={candidate?.image}
                   alt=""
                   className="w-[100px] h-[100px] rounded-[50%]"
                 />
@@ -237,7 +237,7 @@ const Dashboard = () => {
                 >
                   <div className="flex items-center gap-3">
                     <img
-                      src={`${import.meta.env.VITE_APP_BASE_URL}${candidate?.image}`}
+                      src={candidate?.image}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full"
                     />

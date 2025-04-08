@@ -10,7 +10,7 @@ const CandidateCard = ({ candidate, onDelete, onUpdate, votingActive }) => {
     >
       <div className="w-full flex justify-center items-center h-[40%]">
         <img
-          src={`${API_BASE_URL}${candidate?.image}`}
+          src={candidate?.image}
           alt="candidate"
           className="sm:w-[100px] sm:h-[100px] w-[60px] h-[60px] rounded-[50%]"
         />

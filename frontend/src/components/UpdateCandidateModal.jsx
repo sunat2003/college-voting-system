@@ -17,6 +17,7 @@ import { BsDoorOpenFill } from "react-icons/bs";
 import { toast } from "react-toastify";
 const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
 const adminToken = localStorage.getItem("adminToken");
+import { axiosInstance } from "../store";
 
 
 
@@ -86,13 +87,13 @@ const UpdateCandidateModal = ({
     }
 
     try {
-      await axios.put(
+      await axiosInstance.put(
         `${API_BASE_URL}/candidates/${candidateData._id}`,
         formDataToSend, {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${adminToken}`,
           },
+          isAdmin: true
         }
       );
       toast.success("Candidate update successfully");
