@@ -4,9 +4,16 @@ const Candidate = require("../models/Candidate");
 exports.addCandidate = async (req, res) => {
   try {
     const { name, party, department, position } = req.body;
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+    const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
 
-    const candidate = new Candidate({ name, party, department, position, image: imagePath });
+    const candidate = new Candidate({
+      name,
+      party,
+      department,
+      position,
+      image: imageUrl,
+    });
+
     await candidate.save();
 
     res.status(201).json({ message: "Candidate added successfully", candidate });
@@ -14,6 +21,7 @@ exports.addCandidate = async (req, res) => {
     res.status(500).json({ message: "Error adding candidate", error });
   }
 };
+
 
 // Get all candidates (admin)
 exports.getCandidates = async (req, res) => {
@@ -54,7 +62,7 @@ exports.getCandidateById = async (req, res) => {
 exports.updateCandidate = async (req, res) => {
   try {
     const { name, party, department, position } = req.body;
-    const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+    const imageUrl = req.file ? req.file.path : null; // Cloudinary URL
 
     const candidate = await Candidate.findById(req.params.id);
     if (!candidate) {
@@ -65,8 +73,9 @@ exports.updateCandidate = async (req, res) => {
     candidate.party = party || candidate.party;
     candidate.department = department || candidate.department;
     candidate.position = position || candidate.position;
-    if (imagePath) {
-      candidate.image = imagePath;
+
+    if (imageUrl) {
+      candidate.image = imageUrl;
     }
 
     await candidate.save();
