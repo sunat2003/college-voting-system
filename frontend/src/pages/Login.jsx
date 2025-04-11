@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,11 +12,10 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import loginImage from "../assets/signup.jpg";
 import { RiLockPasswordFill } from "react-icons/ri";
 import { FaUserAlt } from "react-icons/fa";
 import { RiAdminLine } from "react-icons/ri";
-import LoginAnimations from '../components/lottie/LoginAnimations';
+import LoginAnimations from "../components/lottie/LoginAnimations";
 
 // Zod Schema
 const loginSchema = z.object({
@@ -34,6 +33,7 @@ const loginSchema = z.object({
 const Login = () => {
   const { login, adminLogin } = useStore();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     register,
@@ -43,7 +43,7 @@ const Login = () => {
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      role: "", // important fix
+      role: "",
       voterId: "",
       password: "",
     },
@@ -52,6 +52,7 @@ const Login = () => {
   const selectedRole = watch("role");
 
   const onSubmit = async (data) => {
+    setIsLoading(true);
     try {
       if (data.role === "admin") {
         await adminLogin({ adminID: data.voterId, password: data.password });
@@ -62,19 +63,15 @@ const Login = () => {
       }
     } catch (error) {
       console.error("Login failed:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="w-screen flex md:flex-row flex-col md:h-screen h-auto gap-y-10 pt-10">
       <div className="md:w-1/2 w-full h-full flex justify-center items-center">
-        {/* <img
-          src={loginImage}
-          alt="loading"
-          className="md:h-2/4 md:w-2/4 w-[100px] h-[100px]"
-        /> */}
-
-        <LoginAnimations/>
+        <LoginAnimations />
       </div>
       <div className="md:w-1/2 w-full h-full flex flex-col justify-center items-center pb-10">
         <form
@@ -146,10 +143,17 @@ const Login = () => {
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              sx={{ background: "#41122e", mb: 2, mt: 2 }}
+              disabled={isLoading}
+              sx={{
+                background: isLoading ? "#888" : "#41122e",
+                mb: 2,
+                mt: 2,
+                "&:hover": {
+                  background: isLoading ? "#888" : "#5e1f3e",
+                },
+              }}
             >
-              Login
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
           </Box>
         </form>
