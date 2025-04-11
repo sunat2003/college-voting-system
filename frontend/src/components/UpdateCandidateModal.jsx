@@ -124,7 +124,7 @@ const UpdateCandidateModal = ({
           p: 4,
           borderRadius: 2,
         }}
-        className="md:w-[600px] w-[400px]"
+        className="md:w-[600px] w-[350px]"
       >
         <Typography variant="h6" sx={{ mb: 2, color: "#41122e" }}>
           Update Candidate
@@ -228,7 +228,7 @@ const UpdateCandidateModal = ({
                 Current Image:
               </Typography>
               <img
-                src={`${import.meta.env.VITE_APP_BASE_URL}${candidateData.image}`}
+                src={candidateData?.image}
                 alt="Current"
                 style={{
                   width: "100px",
