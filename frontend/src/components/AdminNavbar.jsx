@@ -20,8 +20,9 @@ import { FaRegCircle } from "react-icons/fa";
 import { axiosInstance } from "../store/index";
 import AddDepartmentModal from "./AddDeparartment";
 import AddBranchModal from "./AddBranchModal";
-import DepartmentListModal from '../components/DepartmentListModal';
-import BranchListModal from '../components/BranchListModal';
+import DepartmentListModal from "../components/DepartmentListModal";
+import BranchListModal from "../components/BranchListModal";
+import AddAdminModal from "./AddAdminModal";
 
 const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 const adminToken = localStorage.getItem("adminToken");
@@ -44,6 +45,7 @@ const AdminNavbar = () => {
   const [isAddBranchModalOpen, setIsAddBranchModalOpen] = useState(false);
   const [openListDept, setOpenListDept] = useState(false);
   const [openListBranch, setOpenListBranch] = useState(false);
+  const [openAdminModal, setOpenAdminModal] = useState(false);
 
 
   useEffect(() => {
@@ -244,7 +246,8 @@ const AdminNavbar = () => {
                   className="cursor-pointer hover:text-[gray] text-[15px] py-1 flex items-center gap-x-2"
                   onClick={() => {
                     setIsSidebarOpen(false);
-                    setOpenListDept(true)                  }}
+                    setOpenListDept(true);
+                  }}
                 >
                   <FaRegCircle />
                   Department List
@@ -289,13 +292,24 @@ const AdminNavbar = () => {
                   className="cursor-pointer hover:text-[gray] text-[15px] py-1 flex items-center gap-x-2"
                   onClick={() => {
                     setIsSidebarOpen(false);
-                    setOpenListBranch(true);                  }}
+                    setOpenListBranch(true);
+                  }}
                 >
                   <FaRegCircle />
                   Branch List
                 </li>
               </ul>
             )}
+          </li>
+
+          <li
+            className="cursor-pointer text-[#41122e] hover:text-[#6d3b59] flex items-center gap-x-2"
+            onClick={() => {
+              setOpenAdminModal(true);
+              setIsSidebarOpen(false);
+            }}
+          >
+            <MdOutlinePersonAdd /> Add Admin
           </li>
         </ul>
         <div className="w-full px-5">
@@ -356,18 +370,29 @@ const AdminNavbar = () => {
       />
 
       <AddDepartmentModal
-      open={isAddDepartmentModalOpen}
-      onClose={()=>{setIsAddDepartmentModalOpen(false)}}/>
-
-
-      <AddBranchModal
-       open={isAddBranchModalOpen}
-       onClose={()=>{setIsAddBranchModalOpen(false)}}
+        open={isAddDepartmentModalOpen}
+        onClose={() => {
+          setIsAddDepartmentModalOpen(false);
+        }}
       />
 
-<DepartmentListModal open={openListDept} onClose={() => setOpenListDept(false)} />
-      <BranchListModal open={openListBranch} onClose={() => setOpenListBranch(false)} />
+      <AddBranchModal
+        open={isAddBranchModalOpen}
+        onClose={() => {
+          setIsAddBranchModalOpen(false);
+        }}
+      />
 
+      <DepartmentListModal
+        open={openListDept}
+        onClose={() => setOpenListDept(false)}
+      />
+      <BranchListModal
+        open={openListBranch}
+        onClose={() => setOpenListBranch(false)}
+      />
+
+      <AddAdminModal open={openAdminModal} handleClose={() => setOpenAdminModal(false)} />
     </>
   );
 };
