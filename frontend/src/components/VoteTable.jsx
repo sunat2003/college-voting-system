@@ -4,6 +4,7 @@ import axios from "axios";
 import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 const adminToken = localStorage.getItem("adminToken");
+import { axiosInstance } from '../store/index';
 
 
 
@@ -14,10 +15,8 @@ const VoteTable = () => {
 
   const fetchVotes = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/votes/vote` ,{
-        headers: {
-          Authorization: `Bearer ${adminToken}`,
-        },
+      const res = await axiosInstance.get(`${API_BASE_URL}/votes/vote` , {
+        isAdmin: true,
       });
       const formattedVotes = res.data.votes.map((vote) => ({
         id: vote._id,
