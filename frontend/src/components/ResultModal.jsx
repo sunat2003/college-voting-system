@@ -3,6 +3,8 @@ import { AiOutlineClose } from "react-icons/ai";
 import axios from "axios";
 import { Modal, Box, Typography, Button, Divider } from "@mui/material";
 import WinnerAnimation from "./lottie/WinnerAnimation";
+import { axiosInstance } from "../store/index";
+
 
 const API_BASE_URL =`${import.meta.env.VITE_APP_BASE_URL}/api`;
 const token = localStorage.getItem("token");
@@ -19,11 +21,7 @@ const ResultModal = ({ open, onClose }) => {
   useEffect(() => {
     const fetchStatusAndWinners = async () => {
       try {
-        const statusRes = await axios.get(`${API_BASE_URL}/election/status`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const statusRes = await axiosInstance.get(`${API_BASE_URL}/election/status`);
         setWinMessage(statusRes.data?.showWinners);
 
         if (statusRes.data?.showWinners) {
@@ -86,7 +84,7 @@ const ResultModal = ({ open, onClose }) => {
                     <div className="border-wrapper p-[2px] rounded-lg bg-gradient-to-r from-[#2d052d] via-[#fff] to-[#2d052d]">
                       <div className="p-3 bg-white rounded-lg flex justify-center items-center gap-x-5">
                         <img
-                          src={`${import.meta.env.VITE_APP_BASE_URL}${winner?.image}`}
+                          src={winner?.image}
                           alt=""
                           className="w-[60px] h-[60px] rounded-[50%]"
                         />
@@ -130,7 +128,7 @@ const ResultModal = ({ open, onClose }) => {
                     <div className="border-wrapper p-[2px] rounded-lg bg-gradient-to-r from-[#2d052d] via-[#fff] to-[#2d052d]">
                       <div className="p-3 bg-white rounded-lg flex justify-center items-center gap-x-5">
                         <img
-                          src={`${import.meta.env.VITE_APP_BASE_URL}${winner?.image}`}
+                          src={winner?.image}
                           alt=""
                           className="w-[60px] h-[60px] rounded-[50%]"
                         />
@@ -152,7 +150,7 @@ const ResultModal = ({ open, onClose }) => {
                     <div className="border-wrapper p-[2px] rounded-lg bg-gradient-to-r from-[#2d052d] via-[#fff] to-[#2d052d]">
                       <div className="p-3 bg-white rounded-lg flex justify-center items-center gap-x-5">
                         <img
-                          src={`${import.meta.env.VITE_APP_BASE_URL}${winner?.image}`}
+                          src={winner?.image}
                           alt=""
                           className="w-[60px] h-[60px] rounded-[50%]"
                         />
@@ -174,7 +172,7 @@ const ResultModal = ({ open, onClose }) => {
                     <div className="border-wrapper p-[2px] rounded-lg bg-gradient-to-r from-[#2d052d] via-[#fff] to-[#2d052d]">
                       <div className="p-3 bg-white rounded-lg flex justify-center items-center gap-x-5">
                         <img
-                          src={`${import.meta.env.VITE_APP_BASE_URL}${winner?.image}`}
+                          src={winner?.image}
                           alt=""
                           className="w-[60px] h-[60px] rounded-[50%]"
                         />
