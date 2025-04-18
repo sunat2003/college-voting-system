@@ -108,7 +108,7 @@ const ResultModal = ({ open, onClose }) => {
                     <div className="border-wrapper p-[2px] rounded-lg bg-gradient-to-r from-[#2d052d] via-[#fff] to-[#2d052d]">
                       <div className="p-3 bg-white rounded-lg flex justify-center items-center gap-x-5">
                         <img
-                          src={`${import.meta.env.VITE_APP_BASE_URL}${winner?.image}`}
+                          src={winner?.image}
                           alt=""
                           className="w-[60px] h-[60px] rounded-[50%]"
                         />
