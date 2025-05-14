@@ -23,8 +23,15 @@ import { useNavigate } from "react-router-dom";
 import LottieAnimation from "./LottieAnimation";
 
 const signupSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters").max(20),
-  rollNumber: z.string().min(1, "Roll Number is required"),
+  username: z.string()
+             .nonempty("Username is required")
+             .min(3, "Username must be at least 3 characters long")
+             .refine(val => !/^\d+$/.test(val), {
+               message: "Username cannot be only numbers",
+             }),
+  rollNumber: z.string()
+               .nonempty("Roll Number is required")
+               .min(6, "Roll Number must be atleast 6 digit"),
   department: z.string().min(1, "Department is required"),
   branch: z.string().min(1, "Branch is required"),
   gender: z.string().min(1, "Gender is required"),

@@ -10,7 +10,13 @@ import {toast} from 'react-toastify';
 const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 
 const validationSchema = z.object({
-  name: z.string().nonempty("Department name is required"),
+  name: z
+    .string()
+    .nonempty("Department name is required")
+    .min(3, "Department name must be at least 3 characters long")
+    .refine(val => !/^\d+$/.test(val), {
+      message: "Department name cannot be only numbers",
+    }),
 });
 
 const AddDepartmentModal = ({ open, onClose }) => {

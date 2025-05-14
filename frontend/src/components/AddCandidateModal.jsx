@@ -11,9 +11,27 @@ import { BsDoorOpenFill } from "react-icons/bs";
 
 // Validation Schema using Zod
 const validationSchema = z.object({
-  name: z.string().nonempty({ message: "Name is required." }),
-  party: z.string().nonempty({ message: "Party is required." }),
-  department: z.string().nonempty({ message: "Department is required." }),
+  name:  z
+  .string()
+  .nonempty("Candidate  name is required")
+  .min(3, "Candidate name must be at least 3 characters long")
+  .refine(val => !/^\d+$/.test(val), {
+    message: "Candidate name cannot be only numbers",
+  }),
+  party:  z
+  .string()
+  .nonempty("Party is required")
+  .min(3, "Party name must be at least 3 characters long")
+  .refine(val => !/^\d+$/.test(val), {
+    message: "Party cannot be only numbers",
+  }),
+  department:  z
+  .string()
+  .nonempty("Department  name is required")
+  .min(3, "Department name must be at least 3 characters long")
+  .refine(val => !/^\d+$/.test(val), {
+    message: "Department name cannot be only numbers",
+  }),
   position: z.string().nonempty({ message: "Position is required." }),
   image: z.any().refine((file) => file !== null, { message: "Image is required." }),
 });

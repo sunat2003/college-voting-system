@@ -19,7 +19,13 @@ const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 
 // Validation schema
 const validationSchema = z.object({
-  adminID: z.string().min(1, { message: "Admin ID is required." }),
+  adminID:  z
+  .string()
+  .nonempty("Admin Id is required")
+  .min(3, "Admin Id must be at least 3 characters long")
+  .refine(val => !/^\d+$/.test(val), {
+    message: "Admin Id cannot be only numbers",
+  }),
   password: z.string().min(1, { message: "Password is required." }),
 });
 

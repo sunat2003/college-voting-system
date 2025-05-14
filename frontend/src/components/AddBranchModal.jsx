@@ -11,8 +11,13 @@ import {toast} from 'react-toastify';
 const API_BASE_URL = `${import.meta.env.VITE_APP_BASE_URL}/api`;
 
 const schema = z.object({
-  name: z.string().nonempty("Branch name is required"),
-  departmentId: z.string().nonempty("Department is required"),
+  name: z
+    .string()
+    .nonempty("Branch name is required")
+    .min(3, "Branch name must be at least 3 characters long")
+    .refine(val => !/^\d+$/.test(val), {
+      message: "Branch name cannot be only numbers",
+    }),
 });
 
 const AddBranchModal = ({ open, onClose }) => {
